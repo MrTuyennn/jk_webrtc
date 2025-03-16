@@ -11,29 +11,132 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/to/develop-packages).
 -->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+# JK WebRTC
+
+A Flutter WebRTC package that provides easy-to-use WebRTC functionality for your Flutter applications.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- Video/Audio calling
+- Data channel support
+- Screen sharing
+- Custom WebRTC implementation
+- Easy-to-use API
 
-## Getting started
+## Installation
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+To use this package, add `jk_webrtc` as a dependency in your `pubspec.yaml` file:
+
+```yaml
+dependencies:
+  jk_webrtc:
+    git:
+      url: https://github.com/MrTuyennn/jk_webrtc.git
+      ref: main
+```
+
+Then run:
+```bash
+flutter pub get
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+### Basic Setup
 
 ```dart
-const like = 'sample';
+import 'package:jk_webrtc/jk_webrtc.dart';
+
+// Initialize signaling
+final signaling = Signaling(
+  selfId,     // Your user ID
+  peerId,     // Peer's ID
+  onlyDataChannel,  // true if you only need data channel
+  localVideo, // true to enable local video
+);
+
+// Listen for state changes
+signaling.onSignalingStateChange = (SignalingState state) {
+  // Handle state changes
+};
+
+// Listen for call state changes
+signaling.onCallStateChange = (Session session, CallState state) {
+  // Handle call state changes
+};
+
+// Listen for local stream
+signaling.onLocalStream = (MediaStream stream) {
+  // Handle local stream
+};
 ```
 
-## Additional information
+### Making a Call
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+```dart
+// Start a call
+await signaling.invite(peerId, {
+  'audio': true,
+  'video': true,
+  'datachannel': true
+});
+```
+
+### Handling Data Channel
+
+```dart
+// Listen for data channel messages
+signaling.onDataChannelMessage = (Session session, RTCDataChannel dc, RTCDataChannelMessage data) {
+  // Handle received messages
+};
+
+// Send message through data channel
+session.dc?.send(RTCDataChannelMessage('Hello!'));
+```
+
+## Additional Configuration
+
+### ICE Servers
+
+You can configure ICE servers in your implementation:
+
+```dart
+final Map<String, dynamic> _iceServers = {
+  'iceServers': [
+    {'url': 'stun:your-stun-server:port'},
+    {
+      'url': 'turn:your-turn-server:port',
+      'username': 'username',
+      'credential': 'credential'
+    },
+  ]
+};
+```
+
+## Example
+
+Check the example directory for a complete example app.
+
+## Requirements
+
+- Flutter: >=1.17.0
+- Dart SDK: ^3.5.2
+- Dependencies:
+  - flutter_webrtc (custom implementation)
+  - shared_preferences: ^2.0.9
+  - path_provider: ^2.0.7
+  - event_bus: ^2.0.0
+
+## Contributing
+
+Feel free to contribute to this project.
+
+1. Fork it
+2. Create your feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin feature/your-feature`)
+5. Create a new Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
